@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  dbackup:
+    build: ./source
+    container_name: DBackup
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: example
+    labels:
+      - dbackup.backup=true
+      - mytool.type="postgres"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  sqlite:
+    image: alpine
+    command: ["sh", "-c", "sleep infinity"]
+    labels:
+      - dbackup.backup=true
+      - mytool.type="sqlite"
+    volumes:
+      - ./sqlite-data:/data
+
+volumes:
+  pgdata:
