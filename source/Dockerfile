@@ -8,4 +8,4 @@ COPY DBackup.py .
 
 ENV PYTHONUNBUFFERED=1
 
-CMD ["python", "DBackup.py"]
+CMD ["python", "entry.py"]

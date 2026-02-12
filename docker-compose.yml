@@ -6,6 +6,8 @@ services:
     container_name: DBackup
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./backups:/backups
+
     restart: unless-stopped
 
   postgres:
@@ -13,7 +15,7 @@ services:
     environment:
       POSTGRES_PASSWORD: example
     labels:
-      - dbackup.backup=true
+      - dbackup.on=true
       - mytool.type="postgres"
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -22,7 +24,7 @@ services:
     image: alpine
     command: ["sh", "-c", "sleep infinity"]
     labels:
-      - dbackup.backup=true
+      - dbackup.on=true
       - mytool.type="sqlite"
     volumes:
       - ./sqlite-data:/data
