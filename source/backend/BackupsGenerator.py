@@ -9,9 +9,28 @@ class BackupGenerator():
     
     def __init__(self):
         self.client = docker.from_env()
-        self.basePath=os.path.join(os.path.dirname(os.path.abspath(__file__)), "backups")
+        self.basePath=""
+
 
     ## All those print statments were writen by me. I like to see info about everything. Bleh >:3
+    
+    def setBasePath(self):
+        ## For now I will find it like this. I will try to find more elegant way
+        runnerContainers = self.client.containers.list(filters={"label": "dbackup.runner=this"})
+        
+        if not runnerContainers:
+            raise RuntimeError("=== No runner container found ===")
+        
+        if runnerContainers is not None:
+            runner= runnerContainers[0]
+            for attribute in runner.attrs["Mounts"]:
+                if attribute["Type"]=="bind" and attribute["Destination"]=="/app/backups":
+                    self.basePath=attribute["Source"]
+                    
+        if not self.basePath:
+            raise RuntimeError("=== No valid host folder found for runner container ===")   
+        
+        print(f"=== BASE PATH {self.basePath} ===")
     
     def setJobs(self,container):
     
@@ -62,6 +81,8 @@ class BackupGenerator():
         
 
     def packTar(self,volumeName,target):
+        
+        
         self.client.containers.run(
             image="alpine",
             command=f"tar czf {target} -C /data .",
@@ -73,7 +94,7 @@ class BackupGenerator():
         )  
 
     def generate(self):
-
+        self.setBasePath()
         os.makedirs(self.basePath, exist_ok=True)
 
         ## List, finds and selects containers with label dbackup.on=true

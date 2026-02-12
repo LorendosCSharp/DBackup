@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN pip install --no-cache-dir docker
 
-COPY DBackup.py .
+COPY . /app
 
 ENV PYTHONUNBUFFERED=1
 

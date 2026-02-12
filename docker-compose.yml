@@ -6,8 +6,9 @@ services:
     container_name: DBackup
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./backups:/backups
-
+      - ./backups:/app/backups
+    labels:
+      - dbackup.runner=this
     restart: unless-stopped
 
   postgres:
