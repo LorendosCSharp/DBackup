@@ -11,12 +11,12 @@ class TelegramRepository(IRepository):
         self.token:Final=os.getenv("TELEGRAM_BOT_TOKEN")
         pass
     
-    async def main():
-        bot= telegram.Bot()
+    async def main(self):
+        bot = telegram.Bot(self.token)
         async with bot:
             print(await bot.getMe())
     
-    def upload(self,path):
+    async def upload(self,path):
         print("=== Uploading To Telegram ===")
         
         pass
