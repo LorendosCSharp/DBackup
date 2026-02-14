@@ -1,8 +1,9 @@
+import asyncio
 from datetime import datetime
 import os
+from backend.repositories.RepositoryManager import RepositoryManager
 import docker
 from docker.models.containers import Container
-
 
 class BackupGenerator():
     
@@ -47,34 +48,48 @@ class BackupGenerator():
         
         print("=== Attributes of this container === \n",container.attrs["Mounts"])
         
+        container.pause()            
         for attribute in container.attrs["Mounts"]:
-            container.pause()            
                 
-            self.save(attribute.get("Source") or attribute["Name"],container.name,attribute["Destination"].replace("/","_"),attribute["Type"])
-                
-            container.unpause()        
-
-    def save(self, path:str, containerName:str, destinationPath:str, dataTime:str):
+            path=self.save(attribute.get("Source") or attribute["Name"],container.name,attribute["Destination"].replace("/","_"),attribute["Type"])
         
-        time = datetime.now().strftime("%Y.%m.%d-%H:%M:%S")
-        filename= f"{time}[=]{containerName}[=]{destinationPath}[=]Bind.tar.gz"
+            asyncio.run(self.repositoryManager.uploadAll(path))
+        container.unpause() 
+               
+
+    def save(self, path:str, containerName:str, destinationPath:str, dataType:str)->str:
+        
+        currentTime = datetime.now().strftime("%Y.%m.%d-%H:%M:%S")
+        filename= f"{currentTime}[=]{containerName}[=]{destinationPath}[=]{dataType}.tar.gz"
         target = os.path.join("/temp",filename)
         
         print(f"=== Coping Data To {target} ===")
         
         savePath=os.path.join(self.basePath,"temp")
         
-        self.client.containers.run(
+        tempContainer:Container=self.client.containers.run(
             image="alpine",
             command=f"tar czf {target} -C /data .",
-            remove=True,
             volumes={
                 path: {"bind": "/data", "mode": "ro"},
                 savePath: {"bind": "/temp", "mode": "rw"},
-            }
+            },
+            detach=True
         )  
         
+        result=tempContainer.wait()
+        tempContainer.remove()
+        
+        if result.get("StatusCode") !=0:
+            raise RuntimeError(f"=== Container Failed ===")
+        
+        savedFilePath="/app/work"+target
+        print(savedFilePath)
+        if not os.path.exists(savedFilePath):
+            raise RuntimeError(f"=== Backup couldn't be found after generating it {savedFilePath} ===")
+        
         print(f"=== Saved {target} ===")
+        return savedFilePath
 
     def initialScan(self):
         
@@ -89,6 +104,8 @@ class BackupGenerator():
         os.makedirs(os.path.join(self.basePath,"backups"), exist_ok=True)
         os.makedirs(os.path.join(self.basePath,"temp"), exist_ok=True)
         
+        self.repositoryManager = RepositoryManager()
+        asyncio.run(self.repositoryManager.instanciateAll())
 
         ## List, finds and selects containers with label dbackup.on=true
         ## works one time after starting

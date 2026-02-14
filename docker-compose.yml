@@ -10,6 +10,8 @@ services:
     labels:
       - dbackup.runner=this
     restart: no
+    env_file:
+      - .env
 
   postgres:
     image: postgres:16

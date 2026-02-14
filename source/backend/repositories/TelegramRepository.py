@@ -1,23 +1,26 @@
 import os
 from typing import Final
 import telegram
-from source.backend.interfaces import IRepository
+from telegram import Bot
+from backend.interfaces import IRepository
 from dotenv import load_dotenv
 
-class TelegramRepository(IRepository):
+class TelegramRepository(IRepository.IRepository):
     
     def __init__(self):
         load_dotenv()
         self.token:Final=os.getenv("TELEGRAM_BOT_TOKEN")
-        pass
-    
-    async def main(self):
-        bot = telegram.Bot(self.token)
-        async with bot:
-            print(await bot.getMe())
+        self.bot=telegram.Bot(self.token)
     
     async def upload(self,path):
         print("=== Uploading To Telegram ===")
-        
+
+        async with self.bot:
+            print(await self.bot.get_me())
+    
+    async def instance(self):
+
         pass
+        
+        
     

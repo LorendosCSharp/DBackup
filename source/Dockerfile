@@ -2,7 +2,7 @@ FROM python:3.14.2-slim
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir docker
+RUN pip install --no-cache-dir docker python-telegram-bot dotenv
 
 COPY . /app
 

@@ -1,3 +1,4 @@
+import asyncio
 from backend.BackupsGenerator import BackupGenerator
 
 class Entry():
@@ -6,7 +7,7 @@ class Entry():
         self.backupGenerator = BackupGenerator()
     
     def main(self):
-        path=self.backupGenerator.generate()
+        self.backupGenerator.generate()
             
 if __name__=="__main__":
     entry = Entry()
