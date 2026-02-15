@@ -33,15 +33,18 @@ class RepositoryManager():
         
         
     
-    async def uploadAll(self,path):
+    async def uploadAll(self,paths:list[str]):
         tasks=[]
         for repo in self.repos:
-            tasks.append(self.upload(repo,path))
+            tasks.append(self.upload(repo,paths))
             print(f"=== Upload task {repo} ===")
                 
         await asyncio.gather(*tasks)
 
-    async def upload(self, repo:IRepository, path):
+    async def upload(self, repo:IRepository, paths:list[str]):
         
-        print(f"=== Strarted uploading for {repo} ===")
-        await repo.upload(path)
+        try:
+            print(f"=== Strarted uploading for {repo} ===")
+            await repo.upload(paths)
+        except Exception as e:
+            print(f"--- Error occurred while uploading {e} ---")

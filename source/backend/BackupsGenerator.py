@@ -1,16 +1,15 @@
-import asyncio
 from datetime import datetime
 import os
 from backend.repositories.RepositoryManager import RepositoryManager
-import docker
 from docker.models.containers import Container
 
 class BackupGenerator():
     
-    def __init__(self):
+    def __init__(self,dockerClient):
         
-        self.client = docker.from_env()
+        self.client=dockerClient
         self.basePath=""
+        
 
 
     ## All those print statments were writen by me. I like to see info about everything. Bleh >:3
@@ -34,26 +33,28 @@ class BackupGenerator():
         
         print(f"=== BASE PATH {self.basePath} ===")
     
-    def setJobs(self,container:Container):
+    async def setJobs(self,container:Container):
     
         labels = container.labels
         if labels.get("dbackup.on") != "true":
             return
         
         print("=== Backup In Progress For %s ===" % container.name)
-        self.manageMounts(container)
+        await self.manageMounts(container)
             
 
-    def manageMounts(self,container:Container):
+    async def manageMounts(self,container:Container):
         
         print("=== Attributes of this container === \n",container.attrs["Mounts"])
         
+        
+        paths=[]
         container.pause()            
         for attribute in container.attrs["Mounts"]:
                 
             path=self.save(attribute.get("Source") or attribute["Name"],container.name,attribute["Destination"].replace("/","_"),attribute["Type"])
-        
-            asyncio.run(self.repositoryManager.uploadAll(path))
+            paths.append(path)
+        await self.repositoryManager.uploadAll(paths)
         container.unpause() 
                
 
@@ -91,13 +92,13 @@ class BackupGenerator():
         print(f"=== Saved {target} ===")
         return savedFilePath
 
-    def initialScan(self):
+    async def scan(self):
         
-        print("=== Initial scan ===")
+        print("=== Scan started ===")
         for c in self.client.containers.list():
-            self.setJobs(c)
+            await self.setJobs(c)
 
-    def generate(self):
+    async def init(self):
         
         self.setBasePath()
         os.makedirs(self.basePath, exist_ok=True)
@@ -105,33 +106,6 @@ class BackupGenerator():
         os.makedirs(os.path.join(self.basePath,"temp"), exist_ok=True)
         
         self.repositoryManager = RepositoryManager()
-        asyncio.run(self.repositoryManager.instanciateAll())
+        await self.repositoryManager.instanciateAll()
 
-        ## List, finds and selects containers with label dbackup.on=true
-        ## works one time after starting
-        
-        self.initialScan()
-            
-        ## List, finds and selects containers with label dbackup.backup=true
-        ## Works only if something has changed (event based)
-
-        for event in self.client.events(decode=True):
-            print("=== Checking ===")
-            if event.get("Type") != "container":
-                continue
-
-            if event.get("Action") not in ("start","update"):
-                continue
-
-            containerID = event["Actor"]["ID"]
-
-            print("=== Found Container ===")
-
-            try:
-                container = self.client.containers.get(containerID)
-            except docker.errors.NotFound:
-                continue
-
-            print("=== Starting Jobs ===")
-            self.setJobs(container)
         
