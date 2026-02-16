@@ -217,3 +217,5 @@ __marimo__/
 backups/
 work/
 sqlite-data/
+ssh_key.pub
+ssh_key

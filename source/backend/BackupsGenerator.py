@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+import shutil
 from backend.repositories.RepositoryManager import RepositoryManager
 from docker.models.containers import Container
 
@@ -56,6 +57,8 @@ class BackupGenerator():
             paths.append(path)
         await self.repositoryManager.uploadAll(paths)
         container.unpause() 
+            
+        
                
 
     def save(self, path:str, containerName:str, destinationPath:str, dataType:str)->str:
@@ -97,13 +100,20 @@ class BackupGenerator():
         print("=== Scan started ===")
         for c in self.client.containers.list():
             await self.setJobs(c)
+        allFiles = os.listdir("/app/work/temp")
+        for file in allFiles:
+            srcPath=os.path.join("/app/work/temp",file)
+            destPath=os.path.join("/app/work/backups",file)
+            
+            shutil.move(srcPath,destPath)
+        
 
     async def init(self):
         
         self.setBasePath()
         os.makedirs(self.basePath, exist_ok=True)
-        os.makedirs(os.path.join(self.basePath,"backups"), exist_ok=True)
-        os.makedirs(os.path.join(self.basePath,"temp"), exist_ok=True)
+        os.makedirs("/app/work/backups", exist_ok=True)
+        os.makedirs("/app/work/temp", exist_ok=True)
         
         self.repositoryManager = RepositoryManager()
         await self.repositoryManager.instanciateAll()

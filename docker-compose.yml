@@ -7,9 +7,11 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./work:/app/work
+      - ./ssh_key:/app/ssh_key
     labels:
       - dbackup.runner=this
     restart: no
+
     env_file:
       - .env
 
@@ -34,3 +36,4 @@ services:
 
 volumes:
   pgdata:
+

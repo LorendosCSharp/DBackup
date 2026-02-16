@@ -33,14 +33,13 @@ class Entry():
        
     async def timedScan(self):
         while True:
-            print("=== Running timed Scan ===")
+            print("=== Added Timed Scan ===")
+            interval = int(os.getenv("RUN_TASK", "604800"))  # default 7 days
+            await asyncio.sleep(interval)
             try:
                 await self.backupGenerator.scan()
             except Exception as e:
                 print(f"--- Error in timedScan: {e} ---")
-            interval = int(os.getenv("RUN_TASK", "604800"))  # default 7 days
-            await asyncio.sleep(interval)
-
             
     async def eventScan(self):
         loop = asyncio.get_running_loop()

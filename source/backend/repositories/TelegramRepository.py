@@ -15,12 +15,6 @@ class TelegramRepository(IRepository.IRepository):
     
     async def upload(self,paths:list[str]):
         print("=== Telegram Repo ===")
-
-        # media:InputMediaDocument=[]
-        # for i,path in enumerate(paths):
-        #     print(f"=== Adding file to Upload Job {path} ===")
-        #     file= open(path,"rb")
-        #     media.append(InputMediaDocument(file))
             
         batches=self.makeBatch(paths)
 
@@ -29,7 +23,7 @@ class TelegramRepository(IRepository.IRepository):
             print(f"=== Sending for User {user} ===")
             for i,batch in enumerate(batches):
                 await self.bot.send_media_group(chat_id=user,media=batch,caption="For: "+paths[0].split("[=]")[1]+f" Batch: {i+1}")
-            print("=== Sending successfully complete ===")
+            print("=== (Telegram)Sending successfully complete ===")
     
     def makeBatch(self,paths:list[str]):
         
