@@ -1,7 +1,7 @@
 # DBackUp small tool to backup your Docker containers
 
 
-[Docs]()
+[Docs](gh pages site is generating)
 
 ## Example docker-compose.yml
 ``` 
@@ -58,7 +58,7 @@
 - dbackup.runner=this
 ```
 
-* If you want to use copy over ssh, you need to provide a ssh_key, see [SCP Repository](repositories/scp-repository.md).
+* If you want to use copy over ssh, you need to provide a ssh_key, see [SCP Repository](docs/repositories/scp-repository.md).
 
 ## Example .env
 ```
