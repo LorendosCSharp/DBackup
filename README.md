@@ -8,41 +8,42 @@
     version: "3.9"
 
     services:
-    dbackup:
-        build: ./source
-        container_name: DBackUp
+        dbackup:
+            build: lorendos:dbackup:v1.0
+            container_name: DBackup
+            volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./work:/app/work
+            - ./ssh_key:/app/ssh_key
+            labels:
+            - dbackup.runner=this
+            restart: no
+
+            env_file:
+            - .env
+
+        postgres:
+            image: postgres:16
+            environment:
+            POSTGRES_PASSWORD: example
+            labels:
+            - dbackup.on=true
+            - mytool.type="postgres"
+            volumes:
+            - pgdata:/var/lib/postgresql/data
+
+        sqlite:
+            image: alpine
+            command: ["sh", "-c", "sleep infinity"]
+            labels:
+            - dbackup.on=true
+            - mytool.type="sqlite"
+            volumes:
+            - ./sqlite-data:/data
+
         volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-        - ./work:/app/work
-        - ./ssh_key:/app/ssh_key
-        labels:
-        - dbackup.runner=this
-        restart: no
+            pgdata:
 
-        env_file:
-        - .env
-
-    postgres:
-        image: postgres:16
-        environment:
-        POSTGRES_PASSWORD: example
-        labels:
-        - dbackup.on=true
-        - mytool.type="postgres"
-        volumes:
-        - pgdata:/var/lib/postgresql/data
-
-    sqlite:
-        image: alpine
-        command: ["sh", "-c", "sleep infinity"]
-        labels:
-        - dbackup.on=true
-        - mytool.type="sqlite"
-        volumes:
-        - ./sqlite-data:/data
-
-    volumes:
-    pgdata: 
 ```
 
 ### Requirements
@@ -58,7 +59,7 @@
 - dbackup.runner=this
 ```
 
-* If you want to use copy over ssh, you need to provide a ssh_key, see [SCP Repository](docs/repositories/scp-repository.md).
+* If you want to use copy over ssh, you need to provide a ssh_key, see [SCP Repository](https://github.com/LorendosCSharp/DBackup/blob/main/docs/repositories/scp-repository.md).
 
 ## Example .env
 ```

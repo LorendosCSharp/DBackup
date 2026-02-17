@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   dbackup:
-    build: ./source
+    build: lorendos:dbackup:v1.0
     container_name: DBackup
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
