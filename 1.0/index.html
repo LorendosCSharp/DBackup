@@ -677,41 +677,41 @@
 <div class="highlight"><pre><span></span><code>    version: &quot;3.9&quot;
 
     services:
-    dbackup:
-        build: ./source
-        container_name: DBackUp
+        dbackup:
+            build: lorendos:dbackup:v1.0
+            container_name: DBackup
+            volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./work:/app/work
+            - ./ssh_key:/app/ssh_key
+            labels:
+            - dbackup.runner=this
+            restart: no
+
+            env_file:
+            - .env
+
+        postgres:
+            image: postgres:16
+            environment:
+            POSTGRES_PASSWORD: example
+            labels:
+            - dbackup.on=true
+            - mytool.type=&quot;postgres&quot;
+            volumes:
+            - pgdata:/var/lib/postgresql/data
+
+        sqlite:
+            image: alpine
+            command: [&quot;sh&quot;, &quot;-c&quot;, &quot;sleep infinity&quot;]
+            labels:
+            - dbackup.on=true
+            - mytool.type=&quot;sqlite&quot;
+            volumes:
+            - ./sqlite-data:/data
+
         volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-        - ./work:/app/work
-        - ./ssh_key:/app/ssh_key
-        labels:
-        - dbackup.runner=this
-        restart: no
-
-        env_file:
-        - .env
-
-    postgres:
-        image: postgres:16
-        environment:
-        POSTGRES_PASSWORD: example
-        labels:
-        - dbackup.on=true
-        - mytool.type=&quot;postgres&quot;
-        volumes:
-        - pgdata:/var/lib/postgresql/data
-
-    sqlite:
-        image: alpine
-        command: [&quot;sh&quot;, &quot;-c&quot;, &quot;sleep infinity&quot;]
-        labels:
-        - dbackup.on=true
-        - mytool.type=&quot;sqlite&quot;
-        volumes:
-        - ./sqlite-data:/data
-
-    volumes:
-    pgdata: 
+            pgdata:
 </code></pre></div>
 <h3 id="requirements">Requirements</h3>
 <blockquote>
