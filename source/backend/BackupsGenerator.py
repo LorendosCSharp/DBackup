@@ -54,7 +54,8 @@ class BackupGenerator():
         for attribute in container.attrs["Mounts"]:
                 
             path=self.save(attribute.get("Source") or attribute["Name"],container.name,attribute["Destination"].replace("/","_"),attribute["Type"])
-            paths.append(path)
+            if path !="":
+                paths.append(path) 
         await self.repositoryManager.uploadAll(paths)
         container.unpause() 
             
@@ -62,6 +63,13 @@ class BackupGenerator():
                
 
     def save(self, path:str, containerName:str, destinationPath:str, dataType:str)->str:
+        
+        print(f"=== Path is {path} ===")
+        
+        if path.__contains__("/var/run/docker.sock"):
+            print("=== Skipping docker.sock ===")
+            return ""
+        
         
         currentTime = datetime.now().strftime("%Y.%m.%d-%H:%M:%S")
         filename= f"{currentTime}[=]{containerName}[=]{destinationPath}[=]{dataType}.tar.gz"
@@ -84,8 +92,7 @@ class BackupGenerator():
         exit 1
         fi
         '
-        """
-        
+        """   
         
         tempContainer:Container=self.client.containers.run(
             image="alpine",

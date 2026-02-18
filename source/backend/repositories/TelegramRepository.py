@@ -18,7 +18,7 @@ class TelegramRepository(IRepository.IRepository):
             
         batches=self.makeBatch(paths)
 
-        print("=== Uploading ===")
+        print(f"=== Uploading {batches} ===")
         for user in self.users:
             print(f"=== Sending for User {user} ===")
             for i,batch in enumerate(batches):
