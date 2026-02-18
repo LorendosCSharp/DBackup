@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   dbackup:
-    image: lorendos/dbackup:v1.0
+    build: ./source
     container_name: DBackup
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -33,6 +33,7 @@ services:
       - mytool.type="sqlite"
     volumes:
       - ./sqlite-data:/data
+      - ./test.txt:/test.txt
 
 volumes:
   pgdata:
