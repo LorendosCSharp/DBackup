@@ -9,7 +9,7 @@
 
     services:
         dbackup:
-            image: lorendos:dbackup:v1.0
+            image: lorendos/dbackup:v1.0
             container_name: DBackup
             volumes:
             - /var/run/docker.sock:/var/run/docker.sock
