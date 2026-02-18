@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>http://localhost:8000/1.*/</loc>
+         <lastmod>2026-02-18</lastmod>
+    </url>
+    <url>
+         <loc>http://localhost:8000/1.*/repositories/repository/</loc>
+         <lastmod>2026-02-18</lastmod>
+    </url>
+    <url>
+         <loc>http://localhost:8000/1.*/repositories/scp-repository/</loc>
+         <lastmod>2026-02-18</lastmod>
+    </url>
+    <url>
+         <loc>http://localhost:8000/1.*/repositories/telegram-repository/</loc>
+         <lastmod>2026-02-18</lastmod>
+    </url>
+    <url>
+         <loc>http://localhost:8000/1.*/settings/enivrement/</loc>
+         <lastmod>2026-02-18</lastmod>
+    </url>
+    <url>
+         <loc>http://localhost:8000/1.*/settings/event-scan/</loc>
+         <lastmod>2026-02-18</lastmod>
+    </url>
+    <url>
+         <loc>http://localhost:8000/1.*/settings/periodic-scan/</loc>
+         <lastmod>2026-02-18</lastmod>
+    </url>
+</urlset>
