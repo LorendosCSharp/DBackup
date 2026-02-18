@@ -1,7 +1,7 @@
 # DBackUp small tool to backup your Docker containers
 
 
-[Docs](gh pages site is generating)
+[Docs](https://lorendoscsharp.github.io/DBackup/1.0/)
 
 ## Example docker-compose.yml
 ``` 
@@ -9,7 +9,7 @@
 
     services:
         dbackup:
-            build: lorendos:dbackup:v1.0
+            image: lorendos:dbackup:v1.0
             container_name: DBackup
             volumes:
             - /var/run/docker.sock:/var/run/docker.sock
