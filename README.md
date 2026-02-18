@@ -1,7 +1,7 @@
 # DBackUp small tool to backup your Docker containers
 
 
-[Docs](https://lorendoscsharp.github.io/DBackup/1.0/)
+[Docs](https://lorendoscsharp.github.io/DBackup/)
 
 ## Example docker-compose.yml
 ``` 
