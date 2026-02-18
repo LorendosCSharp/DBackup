@@ -85,7 +85,7 @@ class BackupGenerator():
         tempContainer.remove()
         
         if result.get("StatusCode") !=0:
-            raise RuntimeError(f"=== Container Failed ===")
+            raise RuntimeError(f"--- Container Failed {result}---")
         
         savedFilePath="/app/work"+target
         print(savedFilePath)
