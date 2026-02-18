@@ -71,9 +71,25 @@ class BackupGenerator():
         
         savePath=os.path.join(self.basePath,"temp")
         
+        tarCommand = f"""
+        sh -c '
+        if [ -d /data ]; then
+        echo "Directory mount detected"
+        tar czf {target} -C /data .
+        elif [ -f /data ]; then
+        echo "File mount detected"
+        tar czf {target} /data
+        else
+        echo "Unsupported mount type"
+        exit 1
+        fi
+        '
+        """
+        
+        
         tempContainer:Container=self.client.containers.run(
             image="alpine",
-            command=f"tar czf {target} -C /data .",
+            command=tarCommand,
             volumes={
                 path: {"bind": "/data", "mode": "ro"},
                 savePath: {"bind": "/temp", "mode": "rw"},
